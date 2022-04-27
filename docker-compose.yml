@@ -1,0 +1,60 @@
+version: '3'
+
+volumes:
+  local_postgres_data: {}
+  local_redis_data: {}
+
+services:
+  django: &django
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    image: rate_task_local_django
+    depends_on:
+      - postgres
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    ports:
+      - "8083:8080"
+    command: /bin/sh -c "python manage.py collectstatic --noinput && python manage.py migrate && python manage.py runserver 0.0.0.0:8080"
+
+  postgres:
+    image: postgres:11-alpine
+    volumes:
+      - local_postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=rate_task_db
+      - POSTGRES_USER=rate_task_user
+      - POSTGRES_PASSWORD=rate_task_pass
+    ports:
+      - "5438:5432"
+
+  redis:
+    image: redis:5.0
+    ports:
+      - "6378:6379"
+    volumes:
+      - local_redis_data:/data
+
+  celeryworker:
+    <<: *django
+    image: rate_task_local_celeryworker
+    depends_on:
+      - django
+      - redis
+    volumes:
+      - .:/app:z
+    ports: [ ]
+    command: celery -A config.celery worker -l INFO
+
+  celerybeat:
+    <<: *django
+    image: rate_task_local_celerybeat
+    depends_on:
+      - celeryworker
+    volumes:
+      - .:/app:z
+    ports: [ ]
+    command: celery -A config.celery beat -l INFO

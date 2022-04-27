@@ -1,0 +1,24 @@
+pytz==2021.3  # https://github.com/stub42/pytz
+celery[redis]==5.2.3
+psycopg2==2.8.6 --no-binary psycopg2  # https://github.com/psycopg/psycopg2
+
+# Django
+# ------------------------------------------------------------------------------
+django==3.2.11  # https://github.com/django/django
+django-environ==0.8.1  # https://github.com/joke2k/django-environ
+django-celery-beat==2.2.1  # https://github.com/celery/django-celery-beat
+django-extensions==3.1.5  # https://github.com/django-extensions/django-extensions
+
+# Django REST Framework
+djangorestframework==3.12.4
+djangorestframework-api-key==2.2.0 # https://github.com/florimondmanca/djangorestframework-api-key
+
+# Swagger
+# ------------------------------------------------------------------------------
+drf-yasg[validation]==1.20.0  # https://github.com/axnsan12/drf-yasg/
+
+# Testing
+# ------------------------------------------------------------------------------
+pytest==6.2.5  # https://github.com/pytest-dev/pytest
+pytest-sugar==0.9.4  # https://github.com/Frozenball/pytest-sugar
+factory-boy==3.2.1  # https://github.com/FactoryBoy/factory_boy
